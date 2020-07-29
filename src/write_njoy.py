@@ -793,6 +793,7 @@ class NJOYDat():
         #self.Emax = 3.9 # does not work for ""
         # NB: For T > 3000 K, Emax is scaled up by (T/3000) automatically
         self.Emax = 3.6 # works for ""
+        self.Emax = 10.0 # CERT uses 100 eV, but this requires a patch to NJOY
         #
         # GROUPR
         self.includeMF6 = includeMF6
