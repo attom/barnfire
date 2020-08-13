@@ -47,8 +47,8 @@ def check_unique_short_names(materials, verbosity=False):
         else:
             shortNameSet.update([shortName])
     if verbosity > 1:
-        print 'Short names contained in problem'
-        print shortNameSet
+        print('Short names contained in problem')
+        print(shortNameSet)
 
 def get_union_sab_nuclide_list(materials):
     globalZASabList = set()
@@ -125,12 +125,12 @@ def calc_background_xs(materials, potXSDict, useBXS=False):
 ###############################################################################
 def print_globals(globalZASabList, globalZAList, globalZList, globalTDict, globalBXSDict, globalTXSDict, verbosity=False):
     if verbosity:
-        print '------- Global Variables -------'
-        print 'globalZASabList', sorted(globalZASabList)
-        print 'globalZAList', sorted(globalZAList)
-        print 'globalZList', sorted(globalZList)
-        print 'globalTDict', sorted(globalTDict.items())
-        print 'globalBXSDict', sorted(globalBXSDict.items())
-        print 'globalTXSDict', sorted(globalTXSDict.items())
+        print('------- Global Variables -------')
+        print('globalZASabList', sorted(globalZASabList))
+        print('globalZAList', sorted(globalZAList))
+        print('globalZList', sorted(globalZList))
+        print('globalTDict', sorted(globalTDict.items()))
+        print('globalBXSDict', sorted(globalBXSDict.items()))
+        print('globalTXSDict', sorted(globalTXSDict.items()))
 
 

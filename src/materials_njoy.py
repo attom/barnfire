@@ -45,8 +45,8 @@ def create_njoy_decks(inputDict, globalZASabList, njoyTDict, njoyBXSDict, global
     njoyGroupOpt = get_njoy_group_opt(groupOpt)
     tapes = njoy.NJOYTape()
     if verbosity:
-        print '------- Creating NJOY decks -------'
-        print 'Folder ACE_file temperature(K)'
+        print('------- Creating NJOY decks -------')
+        print('Folder ACE_file temperature(K)')
     #
     # Generate fast (non bound-thermal) ACE deck
     #
@@ -89,11 +89,11 @@ def create_njoy_decks(inputDict, globalZASabList, njoyTDict, njoyBXSDict, global
         dat.endfFile = 'endf_{0:02d}{1:03d}{2}_{3}'.format(Z, Atrue, metastableStr, endfLib)
         #
         if verbosity > 1:
-            print Z, A, Sab, dat.sig0List, inelasticThermalMTList, thermalMATList
+            print(Z, A, Sab, dat.sig0List, inelasticThermalMTList, thermalMATList)
         if verbosity:
             for i,T in enumerate(dat.thermList):
-                print '{0} {1:2d}{2:03d}.{3}{4}c {5:.1f}'.format(
-                    dat.nuclideName, Z, Atrue, dat.aceExt, i, T)
+                print('{0} {1:2d}{2:03d}.{3}{4}c {5:.1f}'.format(
+                    dat.nuclideName, Z, Atrue, dat.aceExt, i, T))
         #
         pendfScriptPath, gendfScriptPath, aceScriptPath, aceFiles = njoy.create_njoy_script(dat, tapes)
         pendfScriptPaths.append(pendfScriptPath)
@@ -147,10 +147,10 @@ def create_njoy_decks(inputDict, globalZASabList, njoyTDict, njoyBXSDict, global
         dat.inelasticMTList = inelasticThermalMTList
         #
         if verbosity > 1:
-            print et, et2mcnpDict[et], Zref, Aref, inelasticThermalMTList, thermalMATList
+            print(et, et2mcnpDict[et], Zref, Aref, inelasticThermalMTList, thermalMATList)
         if verbosity:
             for i,T in enumerate(dat.thermList):
-                print '{} {}.{}{}t {:.1f}'.format(dat.thermalFileName, mcnpName, dat.aceExt, i, T)
+                print('{} {}.{}{}t {:.1f}'.format(dat.thermalFileName, mcnpName, dat.aceExt, i, T))
         #
         thermalAceScriptPath, thermalAceFiles = njoy.create_thermal_ace_njoy_script(dat, tapes)
         aceScriptPaths.append(thermalAceScriptPath)
@@ -163,16 +163,16 @@ def create_njoy_decks(inputDict, globalZASabList, njoyTDict, njoyBXSDict, global
 ###############################################################################
 def print_njoys(njoyTDict, njoyBXSDict, verbosity=False):
     if verbosity:
-        print '------- NJOY -------'
-        print 'njoyTDict', sorted(njoyTDict.items())
-        print 'njoyBXSDict', sorted(njoyBXSDict.items())
+        print('------- NJOY -------')
+        print('njoyTDict', sorted(njoyTDict.items()))
+        print('njoyBXSDict', sorted(njoyBXSDict.items()))
 
 def print_mcnp_material_inputs(materials, njoyTDict, verbosity=False):
     '''Print MCNP-style input for each material'''
     if verbosity:
         Sab2mcnp = util.get_element_thermal_name_to_mcnp_thermal_name_dict()
         for i, material in enumerate(materials):
-            print '------- Material {} (ACE) -------'.format(i)
+            print('------- Material {} (ACE) -------'.format(i))
             name = material.shortName
             T = material.temperature
             T_MeV = 8.6173324E-11 * T
@@ -212,27 +212,27 @@ def print_mcnp_material_inputs(materials, njoyTDict, verbosity=False):
                 #
                 # Warn if > 1K difference between desired temperature and NJOY evaluated temperature
                 if distanceToClosestT > 1.0:
-                    print '    Warning: Desired temperature for material {} is {} K,'.format(name, T)
-                    print 'but nearest grid points are {} K and {} K for nuclide {}-{}{}.'.format(nearestTs[0], nearestTs[-1], sym, A, thermalStr)
-                    print 'Input deck below uses ACE file corresponding to a temperature of {} K.'.format(Tgrid[closestTindex])
+                    print('    Warning: Desired temperature for material {} is {} K,'.format(name, T))
+                    print('but nearest grid points are {} K and {} K for nuclide {}-{}{}.'.format(nearestTs[0], nearestTs[-1], sym, A, thermalStr))
+                    print('Input deck below uses ACE file corresponding to a temperature of {} K.'.format(Tgrid[closestTindex]))
                 #
                 # Warn if material's temperature index does not match ACE index
                 if iT != aceTindex:
-                    print '    Warning: Material {} has a temperature index of {},'.format(name, iT)
-                    print 'but nearest temperature index in ACE filesfor nuclide {}-{}{} is {}.'.format(
-                        sym, A, thermalStr, aceTindex)
+                    print('    Warning: Material {} has a temperature index of {},'.format(name, iT))
+                    print('but nearest temperature index in ACE filesfor nuclide {}-{}{} is {}.'.format(
+                        sym, A, thermalStr, aceTindex))
             #
             # Print MCNP material input
-            print 'MCNP-style material input for {}:'.format(name)
-            print '     atom_density (1/b-cm): {:.5f}'.format(aD)
-            print '     tmp (MeV): {:.3e}'.format(T_MeV)
-            print 'm{}'.format(i)
+            print('MCNP-style material input for {}:'.format(name))
+            print('     atom_density (1/b-cm): {:.5f}'.format(aD))
+            print('     tmp (MeV): {:.3e}'.format(T_MeV))
+            print('m{}'.format(i))
             for strr in mcnpStrings:
-                print strr
+                print(strr)
             if mcnpThermalStrings:
-                print 'mt{}'.format(i)
+                print('mt{}'.format(i))
             for strr in sorted(mcnpThermalStrings):
-                print strr
+                print(strr)
 
 ###############################################################################
 def get_group_boundaries(inputDict, verbosity):
@@ -241,7 +241,7 @@ def get_group_boundaries(inputDict, verbosity):
     energyBounds = inputDict['energybounds']
     resolvedRange = inputDict['resolvedrange']
     if verbosity:
-        print '---- Make Groups ----'
+        print('---- Make Groups ----')
     #
     if groupOpt == 'equal':
         logEnergyBounds = np.log10(energyBounds)
@@ -271,7 +271,7 @@ def get_group_boundaries(inputDict, verbosity):
         if len(groupOpt.rsplit('.', 1)) == 1:
             filename += '.txt'
         if verbosity:
-            print "Reading in group structure from '{0}'".format(filename)
+            print("Reading in group structure from '{0}'".format(filename))
         parserStr += ' -I {0}'.format(filename)
         #Do not crop group structure's energy bounds inputDict['energybounds']
         #(Do we want this??)
@@ -279,15 +279,15 @@ def get_group_boundaries(inputDict, verbosity):
     #
     parserStr += ' -g {0}'.format(desiredGroups)
     if verbosity:
-        print "Saving group structure to 'energy_out_custom.txt'"
+        print("Saving group structure to 'energy_out_custom.txt'")
     if verbosity > 1:
-        print './makegroups.py', parserStr
+        print('./makegroups.py', parserStr)
     mgInputDat = mg.define_input_parser().parse_args(parserStr.split())
     mg.finish_parsing_inputs(mgInputDat)
     groupBdrs = mg.resolve_group_structure(mgInputDat)
     numGroups = len(groupBdrs) - 1
     if verbosity:
-        print numGroups, 'groups will be used'
+        print(numGroups, 'groups will be used')
     return sorted(groupBdrs)
 
 def get_njoy_temperatures(globalZASabList, njoyTDict, globalTDict, globalTXSDict):

@@ -14,7 +14,7 @@ import numpy as np
 def call_example(filename):
     dat = read_pdt_output(filename)
     flatDat = make_flat_pdt_output(dat)
-    print dat.numCells, dat.numGroups, dat.numTotElem, dat.eigval, dat.geoType, dat.probType
+    print(dat.numCells, dat.numGroups, dat.numTotElem, dat.eigval, dat.geoType, dat.probType)
 
 def make_flat_pdt_output(dat):
     '''Returns flattened data structure of PDTOutput'''

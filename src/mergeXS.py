@@ -29,11 +29,11 @@ def do_all(inputDict):
     outFormat = inputDict['outputformat']
     # Step 0: Echo input
     if verbosity:
-        print 'Running XS Merger [o] [o] > [oo]'
+        print('Running XS Merger [o] [o] > [oo]')
     if verbosity > 1:
-        print '-------------------------------'
+        print('-------------------------------')
         for k,v in sorted(inputDict.items()):
-            print k, ":", v
+            print(k, ":", v)
 
     if microORmacro in ['micro', 'both']:
         mat2funcDict = mat.get_materials_name2function_dict()
@@ -56,7 +56,7 @@ def do_all(inputDict):
                     filename = inFormat.format(m=materialName, g=ZA_g)
                     inPath = os.path.join(inDirr, filename)
                     if verbosity:
-                        print 'Reading {}'.format(inPath)
+                        print('Reading {}'.format(inPath))
                     xsDict[materialName][ZA] = pdtxs.read_PDT_xs_generally(inPath)
 
             temperatureList = sorted(temperatureToNameDict.keys())
@@ -70,7 +70,7 @@ def do_all(inputDict):
                 filename = outFormat.format(b=mZAname, g=numGroups, n=numMergedXS)
                 outPath = os.path.join(outDirr, filename)
                 if verbosity:
-                    print 'Writing {}'.format(outPath)
+                    print('Writing {}'.format(outPath))
                 cmpXS = xsDict[materialName][ZA]
                 pdtxs.write_PDT_xs_header(outPath, cmpXS, temperatureList)
                 # Write body of merged XS
@@ -79,7 +79,7 @@ def do_all(inputDict):
                     xs = xsDict[materialName][ZA]
                     pdtxs.write_PDT_xs_body(outPath, xs)
                     if verbosity > 1:
-                        print '    Adding {} at {}K'.format(materialName + '_' + ZA, T)
+                        print('    Adding {} at {}K'.format(materialName + '_' + ZA, T))
 
 
     # Step 1: Aggregate materials
@@ -92,14 +92,14 @@ def do_all(inputDict):
             matchingNames = set([name for name in materialsList if name.split('_')[0] == baseName])
             materialsSetDict[baseName] = matchingNames
     if verbosity:
-        print '-------------------------------'
-        print 'basename : matching_materials'
+        print('-------------------------------')
+        print('basename : matching_materials')
         for k,v in sorted(materialsSetDict.items()):
-            print k, ":", v
+            print(k, ":", v)
     # Step 2: For each aggregate, create merged cross section
     for baseName in materialsSetDict:
         if verbosity:
-            print '-------------------------------'
+            print('-------------------------------')
         matchingNames = materialsSetDict[baseName]
         # Step 2a: Read input cross sections
         xsDict = {}
@@ -107,7 +107,7 @@ def do_all(inputDict):
             filename = inFormat.format(m=materialName, g=numGroups)
             inPath = os.path.join(inDirr, filename)
             if verbosity:
-                print 'Reading {}'.format(inPath)
+                print('Reading {}'.format(inPath))
             xsDict[materialName] = pdtxs.read_PDT_xs_generally(inPath)
         # Step 2b: Make sure the cross sections have the same information
         cmpXS = xsDict[materialName]
@@ -123,7 +123,7 @@ def do_all(inputDict):
             tstPDTMTs = set(tstXS.xs.keys())
             if ((tstNumGroups != cmpNumGroups) or (tstNumMoments != cmpNumMoments) or 
                 np.any(tstGroupBounds != cmpGroupBounds) or (tstPDTMTs != cmpPDTMTs)):
-                print "ERROR! The XS of material {} does not match other XS to be merged. Quiting".format(materialName)
+                print("ERROR! The XS of material {} does not match other XS to be merged. Quiting".format(materialName))
                 exit(1)
         # Step 2c: Get dictionary of temperatures for materials in the aggregate
         # If two materials have the same temperature, the last one alphabetically is used
@@ -136,7 +136,7 @@ def do_all(inputDict):
         filename = outFormat.format(b=baseName, g=numGroups, n=numMergedXS)
         outPath = os.path.join(outDirr, filename)
         if verbosity:
-            print 'Writing {}'.format(outPath)
+            print('Writing {}'.format(outPath))
         pdtxs.write_PDT_xs_header(outPath, cmpXS, temperatureList)
         # Step 2e: Write body of merged XS
         for T in temperatureList:
@@ -144,7 +144,7 @@ def do_all(inputDict):
             xs = xsDict[materialName]
             pdtxs.write_PDT_xs_body(outPath, xs)
             if verbosity > 1:
-                print '    Adding {} at {}K'.format(materialName, T)
+                print('    Adding {} at {}K'.format(materialName, T))
 
 ###############################################################################
 def define_input_parser():

@@ -83,7 +83,7 @@ def populate_leaf_directories(dirDict):
 def make_scratch_directories():
     '''Create the scratch directories, if they are not already created.'''
     scratchDict = get_scratch_directories(get_root_directories()['scratch'])
-    for dirr in scratchDict.values():
+    for dirr in list(scratchDict.values()):
         try_mkdir(dirr)
 
 def copy_xnjoy():

@@ -227,7 +227,7 @@ def read_energy_and_indicators(dataDict):
             materialsList, importancesList)}
 
     # Appending to materialNames does not alias onto importanceDict
-    materialNames = importanceDict.keys()
+    materialNames = list(importanceDict.keys())
     numMaterials = len(materialNames)
     # Use infinite medium flux, infinite medium flux with escape xs, and energy itself
     numIndicators = 2 * numMaterials + 1
@@ -370,7 +370,7 @@ def apportion_elements(dataDict, observations):
 
     # Output 0
     # Print the number of elements per coarse group
-    print 'final elements per coarse group ({0}):\n'.format(apportionOpt), numClustersList
+    print('final elements per coarse group ({0}):\n'.format(apportionOpt), numClustersList)
 
     # Output 1
     # Save the number of elements per coarse group
@@ -464,12 +464,12 @@ def auto_apportion(observations, numElementsRRR, groupBdrs, coarseBdrs, apportio
         locLargestFrac = np.argsort(fractions)[-remainder:]
         elementsPerCoarseGroup[locLargestFrac] += 1
     if verbosity and apportionOpt == 'birch':
-        print 'Birch clustering took {0} s'.format(timeBirch)
+        print('Birch clustering took {0} s'.format(timeBirch))
     if verbosity:
-        print 'desired elements per coarse group:\n', desiredElementsPerCoarseGroup
+        print('desired elements per coarse group:\n', desiredElementsPerCoarseGroup)
         if remainder:
-            print 'remainder: {0}; smallest large fractional: {1:.3f}'.format(
-                    remainder, fractions[locLargestFrac[0]])
+            print('remainder: {0}; smallest large fractional: {1:.3f}'.format(
+                    remainder, fractions[locLargestFrac[0]]))
 
     # Outputs
     return elementsPerCoarseGroup
@@ -553,7 +553,7 @@ def cluster_one_coarse_group(dataDict, timeDict, observations, globalLabels, off
 def print_timing_header():
     '''Print the header for print_timing()'''
     # Output
-    print 'coarseGroup, numNeighbors, fracNeighbors, numGroups, timeInitialNeighbors, timeNeighbors, timeCluster'
+    print('coarseGroup, numNeighbors, fracNeighbors, numGroups, timeInitialNeighbors, timeNeighbors, timeCluster')
 
 def print_timing(dataDict, timeDict, numGroups, coarseGroup):
     '''Print interesting size and time information'''
@@ -563,7 +563,7 @@ def print_timing(dataDict, timeDict, numGroups, coarseGroup):
     timeNeighbors = timeDict['timeNeighbors']
     timeCluster = timeDict['timeCluster']
     # Output
-    print coarseGroup, numNeighbors, float(numNeighbors) / numGroups, numGroups, timeInitialNeighbors, timeNeighbors, timeCluster
+    print(coarseGroup, numNeighbors, float(numNeighbors) / numGroups, numGroups, timeInitialNeighbors, timeNeighbors, timeCluster)
 
 def plot_summary(dataDict, observations, globalLabels):
     '''Plot the entire energy range range'''
@@ -615,15 +615,15 @@ def plot_clustering(dataDict, coarseGroup, uniqueLabels, labels, eGrid, obs, num
         elif plotOpt == 'firstlast':
             pointsToPlot = [0, numPoints-1]
         elif plotOpt == 'half':
-            pointsToPlot = range(0, numPoints-1, 2)
+            pointsToPlot = list(range(0, numPoints-1, 2))
         else:
-            pointsToPlot = range(numPoints)
+            pointsToPlot = list(range(numPoints))
         avgLabels, avgEGrid, avgObs = average_observations(labels, eGrid, obs)
         for ip in pointsToPlot:
-            material = materialNames[ip/2]
+            material = materialNames[ip//2]
             if ip % 2 == 1:
                 material += '_e'
-            print 'Saving plot for {0}, {1}, {2}'.format(material, numElements, coarseGroup)
+            print('Saving plot for {0}, {1}, {2}'.format(material, numElements, coarseGroup))
             plt.figure(3)
             plt.clf()
             labelColors = [colors[label] for label in labels]
@@ -884,7 +884,7 @@ def find_minimum_neighbors_radius(observations):
         else:
             bounds[1] = radiusNeighbors
             foundBounds[1] = True
-            radiusNeighbors /= 2
+            radiusNeighbors //= 2
     #
     converged = False
     tol = 1E-2
@@ -928,7 +928,7 @@ def find_minimum_num_neighbors(observations):
         else:
             bounds[1] = numNeighbors
             foundBounds[1] = True
-            numNeighbors /= 2
+            numNeighbors //= 2
         if numNeighbors == 0:
             bounds[0] = 0
             foundBounds[0] = True
@@ -951,7 +951,7 @@ def find_minimum_num_neighbors(observations):
             converged = True
     numNeighbors = bounds[1]
     if not converged:
-        print "Not converged!"
+        print("Not converged!")
     return numNeighbors
 
 
@@ -975,7 +975,7 @@ def define_input_parser():
     parser.add_argument('-c', '--coarsebdrs', help='The resolved resonance range and how it is to be split into coarse groups (one clustering calculation per coarse group).', type=float, nargs='+', default=defaults['coarsebdrs'])
     parser.add_argument('-n', '--numcoarsegroups', help="The number of coarse groups to be used. If nonzero, overwrites the internal members of 'coarsebdrs'", type=int, default=defaults['numcoarsegroups'])
     parser.add_argument('-l', '--listnumelements', help='Number of elements to be put in each coarse boundary. Number of arguments should be one less than the number of coarse boundaries. Takes priority over "elements" if set', type=int, nargs='+', default=defaults['listnumelements'])
-    parser.add_argument('-r', '--resolution', help='Resolution to use for the pointwise flux calculations', type=int, choices=range(11), default=defaults['resolution'])
+    parser.add_argument('-r', '--resolution', help='Resolution to use for the pointwise flux calculations', type=int, choices=list(range(11)), default=defaults['resolution'])
     parser.add_argument('-m', '--materialopt', help="Unless 'manual' is used, specifies a set of materials to use. If 'manual' is used, give a space-separated list of material names in 'listmaterials'.", choices=['4','5','c5g7', 'graphite', 'iron', 'kpin', 'kenrichedpin', 'kcladpin', 'kpin2d', 'kenrichedpin2d', 'kmoxpin2d', 'kmoxenrichedpin2d', 'trigafuel', 'ctrigafuel', 'ctrigafuel_0' 'trigamore', 'manual'], default=defaults['materialopt'])
     parser.add_argument('-i', '--indicatormaterials', dest='listmaterials', help="When manual 'materialopt' is used, specify the materials to use.", nargs='+', default=defaults['listmaterials'])
     parser.add_argument('-I', '--importances', dest='listimportances', help="When manual 'materialopt' is used, specify the weightings (importances) to use when clustering.", nargs='+', type=int, default=[])
@@ -991,7 +991,7 @@ if __name__ == '__main__':
     parser = define_input_parser()
     inputDict = vars(parser.parse_args())
     if inputDict['verbosity'] > 1:
-        print 'Summary of inputs:'
-        print inputDict
+        print('Summary of inputs:')
+        print(inputDict)
     do_all(inputDict)
 

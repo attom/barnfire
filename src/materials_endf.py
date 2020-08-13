@@ -33,7 +33,7 @@ import materials_util as util
 ###############################################################################
 def get_endf_files(ZAList, dirDict, potXSDict, useBXS=False, verbosity=False):
     if verbosity > 1:
-        print '------- ENDF Files -------'
+        print('------- ENDF Files -------')
     make_endf_directory()
     endfDirr = dirDict['endf']
     for (Z, A) in sorted(ZAList):
@@ -43,7 +43,7 @@ def get_endf_files(ZAList, dirDict, potXSDict, useBXS=False, verbosity=False):
         else:
             potXSDict[(Z,A)] = 0.0
     if verbosity > 1:
-        print 'potXSDict', potXSDict
+        print('potXSDict', potXSDict)
 
 def get_endf_file(Z, A, endfDirr, verbosity=False):
     '''Download ENDF file from LANL T2'''
@@ -63,16 +63,16 @@ def get_endf_file(Z, A, endfDirr, verbosity=False):
         if A // 400 > 0:
             metastableStr = 'm1'
         # NB: Remove the .1 to get VII.0 data from LANL
-        webLocation = 'http://t2.lanl.gov/nis/data/data/ENDFB-VII.1-neutron/{0}/{1}{2}'.format(sym, effA, metastableStr)
+        webLocation = 'https://t2.lanl.gov/nis/data/data/ENDFB-VII.1-neutron/{0}/{1}{2}'.format(sym, effA, metastableStr)
         if verbosity:
-            print 'Downloading {0} from {1} to {2}'.format(outname, webLocation, outDirr)
+            print('Downloading {0} from {1} to {2}'.format(outname, webLocation, outDirr))
         os.system('wget {0} -O {1}'.format(webLocation, outPath))
     elif verbosity > 2:
-        print '{0} already downloaded in {1}'.format(outname, outDirr)
+        print('{0} already downloaded in {1}'.format(outname, outDirr))
 
 def get_thermal_endf_files(ZASabList, dirDict, verbosity=False):
     if verbosity > 1:
-        print '------- Bound Thermal ENDF Files -------'
+        print('------- Bound Thermal ENDF Files -------')
     # Copy all bound thermal ENDF XS that exist locally (in ../dat) to the ENDF folder
     copy_thermal_endf_xs()
     # Download any missing bound thermal ENDF XS to the ENDF folder
@@ -93,9 +93,9 @@ def get_thermal_endf_file(Z, Sab, endfDirr, verbosity=False):
     outPath = os.path.join(outDirr, outname)
     tempOutPath = '{0}.tmp'.format(outPath)
     if not(os.path.isfile(outPath)):
-        webLocation = 'http://www.nndc.bnl.gov/sigma/getDataset.jsp?evalid={}'.format(bnlID)
+        webLocation = 'https://www.nndc.bnl.gov/sigma/getDataset.jsp?evalid={}'.format(bnlID)
         if verbosity:
-            print 'Downloading {0} from {1} to {2}'.format(outname, webLocation, outDirr)
+            print('Downloading {0} from {1} to {2}'.format(outname, webLocation, outDirr))
         os.system('wget {0} -O {1}'.format(webLocation, tempOutPath))
         # BNL returns an HTML file. Remove first two lines and last line to get the ENDF file
         numLines = int(check_output(["wc", "-l", tempOutPath]).split()[0])
@@ -103,7 +103,7 @@ def get_thermal_endf_file(Z, Sab, endfDirr, verbosity=False):
             numLines-1, tempOutPath, numLines-3, outPath))
         os.remove('{0}'.format(tempOutPath))
     elif verbosity > 2:
-        print '{0} already downloaded in {1}'.format(outname, outDirr)
+        print('{0} already downloaded in {1}'.format(outname, outDirr))
 
 def get_pot_scat_xs_wrapper(Z, A, endfDirr, verbosity=False):
     '''Look in the ENDF file for the potential scattering XS'''
@@ -117,5 +117,5 @@ def get_pot_scat_xs_wrapper(Z, A, endfDirr, verbosity=False):
     readgrouprDict = get_pot_scat_xs(filePath)
     potScatXS = readgrouprDict['pot']
     if verbosity > 2:
-        print 'Potential cross section for ({0}, {1}) is {2} b'.format(Z, A, potScatXS)
+        print('Potential cross section for ({0}, {1}) is {2} b'.format(Z, A, potScatXS))
     return potScatXS

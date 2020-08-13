@@ -1,7 +1,5 @@
 #! /usr/bin/env bash
-# A. Till Feb 2016
-
-source activate py27
+# A. Till Aug 2020
 
 ############################
 # INITIALIZE VARIABLES

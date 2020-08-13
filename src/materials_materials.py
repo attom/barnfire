@@ -184,7 +184,7 @@ def get_CASL_cladding_material():
     thermalOpt = 'free'
     crAtomFractionsDict = {50:3.30121E-06, 52:6.36606E-05, 53:7.21860E-06, 54:1.79686E-06}
     feAtomFractionsDict = {54:8.68307E-06, 56:1.36306E-04, 57:3.14789E-06, 58:4.18926E-07}
-    zrAtomFractionsDict = {90:2.18865E-02, 91:4.77292E-03, 92:7.29551E-03, 94:7.39335E-03, 
+    zrAtomFractionsDict = {90:2.18865E-02, 91:4.77292E-03, 92:7.29551E-03, 94:7.39335E-03,
                            96:1.19110E-03}
     snAtomFractionsDict = {112:4.68066E-06, 114:3.18478E-06, 115:1.64064E-06, 116:7.01616E-05,
                            117:3.70592E-05, 118:1.16872E-04, 119:4.14504E-05, 120:1.57212E-04,
@@ -1104,7 +1104,7 @@ def get_depleted_triga_fuel_material_0():
         elemMassFracDict=elemMassFracDict, massDensity=massDensity,
         temperatureIndex=temperatureIndex)
     return material
-        
+
 def get_triga_fuel_material():
     shortName = 'tFUEL'
     longName = 'U-ZrH fuel'
@@ -1828,7 +1828,7 @@ def get_multi_temperature_depleted_triga_fuel_material_T7():
 ###############################################################################
 
 def get_all_isotopes(elemDict):
-    symList = elemDict.keys()
+    symList = list(elemDict.keys())
     symDict = {}
     ZList = []
     ZAList = []
@@ -2041,8 +2041,8 @@ def override_abundances(ZAList, abundanceDict, FractionsDict, sym, AoM = 'Atom')
     if not FractionsDict:
         raise ValueError('FractionsDict for {0} must be non-empty.'.format(sym))
     # Python guarantees values() and keys() are congruent if no changes to the dict are made between calls
-    atomFractionsList = np.array(FractionsDict.values())
-    atomFractionsKeys = FractionsDict.keys()
+    atomFractionsList = np.array(list(FractionsDict.values()))
+    atomFractionsKeys = list(FractionsDict.keys())
     if AoM != 'Atom':  # If mass fraction are given, convert to atom fraction
         atomMolarMassList = [nd.nuc(Zthis, A%400)['weight'].nominal_value for A in atomFractionsKeys]
         atomFractionsList = [ massFrac/molarMass for massFrac, molarMass in zip(\
@@ -2081,7 +2081,7 @@ def override_abundances(ZAList, abundanceDict, FractionsDict, sym, AoM = 'Atom')
 def print_materials(materials, verbosity=False):
     if verbosity:
         for i, material in enumerate(materials):
-            print '------- Material {0} -------'.format(i)
+            print('------- Material {0} -------'.format(i))
             material.print_contents(verbosity)
 
 ###############################################################################
@@ -2201,40 +2201,40 @@ class Material():
         if verbosity:
             strs = ['shortName', 'longName']
             for strr in strs:
-                print strr, getattr(self, strr)
+                print(strr, getattr(self, strr))
             #
             strr = 'thermalOpt'
             val = getattr(self, strr)
-            print strr, val
+            print(strr, val)
             #
             strs = [('chordLength', 'cm'), ('temperature', 'K'), ('atomDensity', '1/b-cm'), ('massDensity', 'g/cc') ]
             for (strr, unit) in strs:
-                print strr, getattr(self, strr), '({0})'.format(unit)
+                print(strr, getattr(self, strr), '({0})'.format(unit))
             #
         if verbosity > 1:
             strr, unit =  ('matlWeight', 'g/mole')
-            print strr, getattr(self, strr), '({0})'.format(unit)
+            print(strr, getattr(self, strr), '({0})'.format(unit))
             #
         if verbosity:
             sortedSymList = [self.symDict[Z] for Z in sorted(self.ZList)]
-            print 'symList', sortedSymList
+            print('symList', sortedSymList)
             #
         if verbosity > 1:
             strs = ['ZList', 'ZAList']
             for strr in strs:
-                print strr, sorted(getattr(self, strr))
+                print(strr, sorted(getattr(self, strr)))
             #
             strs = [('abundanceDict', 'atom fraction'), ('elemWeightDict', 'g/mole')]
             for (strr, unit) in strs:
-                print strr, sorted(getattr(self, strr).items()), '({0})'.format(unit)
+                print(strr, sorted(getattr(self, strr).items()), '({0})'.format(unit))
             #
             strs = ['elemAtomFracDict', 'elemMassFracDict']
             for strr in strs:
-                print strr, sorted(getattr(self, strr).items())
+                print(strr, sorted(getattr(self, strr).items()))
             #
             strs = ['SabDict', 'thermalXSDict', 'backgroundXSDict']
             for strr in strs:
-                print strr, sorted(getattr(self, strr).items())
+                print(strr, sorted(getattr(self, strr).items()))
             #
 
     ################################################################
@@ -2272,7 +2272,7 @@ class Material():
         '''Change keys from using sym to using Z'''
         atomFracDictFromSym = self.elemAtomFracDict
         atomFracDictFromZ = {}
-        for sym in atomFracDictFromSym.keys():
+        for sym in list(atomFracDictFromSym.keys()):
             atomFracDictFromZ[nd.sym2z[sym]] = atomFracDictFromSym[sym]
         self.elemAtomFracDict = atomFracDictFromZ
 
@@ -2280,7 +2280,7 @@ class Material():
         '''Change keys from using sym to using Z'''
         massFracDictFromSym = self.elemMassFracDict
         massFracDictFromZ = {}
-        for sym in massFracDictFromSym.keys():
+        for sym in list(massFracDictFromSym.keys()):
             massFracDictFromZ[nd.sym2z[sym]] = massFracDictFromSym[sym]
         self.elemMassFracDict = massFracDictFromZ
 
@@ -2290,7 +2290,7 @@ class Material():
         for Zelem in self.ZList:
             AList = [A for (Z,A) in self.ZAList if Z == Zelem]
             elemAtomFracList = [self.abundanceDict[(Zelem,A)] for A in AList]
-            if A:
+            if AList != [0]:
                 # For metastable states (A increased by 400), use groundstate weights
                 weightList = [nd.nuc(Zelem, A%400)['weight'].nominal_value for A in AList]
                 self.elemWeightDict[Zelem] = np.sum(np.multiply(elemAtomFracList, weightList))
@@ -2300,13 +2300,13 @@ class Material():
 
     def normalize_elem_atom_frac(self):
         '''Make sum(elemAtomFracDcit) == 1'''
-        norm = np.sum((float(value) for value in self.elemAtomFracDict.values()))
+        norm = np.sum((float(value) for value in list(self.elemAtomFracDict.values())))
         for key in self.elemAtomFracDict:
             self.elemAtomFracDict[key] /= norm
 
     def normalize_elem_mass_frac(self):
         '''Make sum(elemMassFracDcit) == 1'''
-        norm = np.sum((float(value) for value in self.elemMassFracDict.values()))
+        norm = np.sum((float(value) for value in list(self.elemMassFracDict.values())))
         for key in self.elemMassFracDict:
             self.elemMassFracDict[key] /= norm
 
@@ -2371,7 +2371,7 @@ class Material():
         '''Determine which thermal cross sections are used by each nuclide in the material.
         The key is (Z,A) and the value is a list of thermal xs names'''
         elem2xs = util.get_element_thermal_name_to_thermal_xs_list_dict()
-        self.thermalXSDict = {(Z,A): elem2xs[elem] for (Z,A), elem in self.SabDict.items()}
+        self.thermalXSDict = {(Z,A): elem2xs[elem] for (Z,A), elem in list(self.SabDict.items())}
 
     def check_background_xs_keys_consistency(self):
         if set(self.backgroundXSDict.keys()) != self.ZAList:

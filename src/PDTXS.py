@@ -66,7 +66,7 @@ def read_PDT_xs_generally(filePath):
         while read1D < num1D or readXfer < numXfer:
             t = fid.readline().split()
             if not t:
-                print 'File said it contained {0} cross sections and {1} transfer matrices, but only contained {2} and {3}, respectively.'.format(num1D, numXfer, read1D, readXfer)
+                print('File said it contained {0} cross sections and {1} transfer matrices, but only contained {2} and {3}, respectively.'.format(num1D, numXfer, read1D, readXfer))
                 break
             MT = int(t[1].strip(','))
             if MT in [457, 458]:
@@ -148,9 +148,9 @@ def write_PDT_xs_header(filePath, xsDat, temperatureList=[], fromStr='barnfire')
 
     # Print all reactions in xsDat, but print the weight first, if it's included
     mtWgt = 1099
-    oneDMTOrder = sorted([key for key in xsDat.xs.keys() if (key != mtWgt and key < 2500)])
-    xferMTOrder = sorted([key for key in xsDat.xs.keys() if key >= 2500])
-    if mtWgt in xsDat.xs.keys():
+    oneDMTOrder = sorted([key for key in list(xsDat.xs.keys()) if (key != mtWgt and key < 2500)])
+    xferMTOrder = sorted([key for key in list(xsDat.xs.keys()) if key >= 2500])
+    if mtWgt in list(xsDat.xs.keys()):
         oneDMTOrder.insert(0, 1099)
     num1D = len(oneDMTOrder)
     numXfer = len(xferMTOrder)
@@ -200,9 +200,9 @@ def write_PDT_xs_body(filePath, xsDat):
     mtDecayConst = 1054
     mtDelayedChi = 2055
     mtFissionMatrix = 2518
-    oneDMTOrder = sorted([key for key in xsDat.xs.keys() if (key not in [mtWgt, mtDecayConst, mtDelayedChi] and key < 2500)])
-    xferMTOrder = sorted([key for key in xsDat.xs.keys() if key >= 2500])
-    if mtWgt in xsDat.xs.keys():
+    oneDMTOrder = sorted([key for key in list(xsDat.xs.keys()) if (key not in [mtWgt, mtDecayConst, mtDelayedChi] and key < 2500)])
+    xferMTOrder = sorted([key for key in list(xsDat.xs.keys()) if key >= 2500])
+    if mtWgt in list(xsDat.xs.keys()):
         oneDMTOrder.insert(0, 1099)
     num1D = len(oneDMTOrder)
     numXfer = len(xferMTOrder)
@@ -215,21 +215,21 @@ def write_PDT_xs_body(filePath, xsDat):
             fid.write('MT {0}\n'.format(MT))
             vectorAlias = xsDat.xs[MT]
             if not hasattr(vectorAlias, '__iter__'):
-                print MT
+                print(MT)
                 # If MT number corresponds to a 0D quantity, print it as a length-1 vector
                 vectorAlias = np.array([vectorAlias])
-                print vectorAlias
+                print(vectorAlias)
             fid.write(multiline_string(vectorAlias, 20, 5, 12))
 
         # write decay constants for delayed neutron groups
-        if mtDecayConst in xsDat.xs.keys():
+        if mtDecayConst in list(xsDat.xs.keys()):
             MT = mtDecayConst
             fid.write('MT {0}\n'.format(MT))
             vectorAlias = xsDat.xs[MT]
             fid.write('  Number of delayed neutron groups: {0}\n'.format(numDNGs))
             fid.write(multiline_string(vectorAlias, 20, 5, 12))
         # write delayed neutron spectra
-        if mtDelayedChi in xsDat.xs.keys():
+        if mtDelayedChi in list(xsDat.xs.keys()):
             MT = mtDelayedChi
             fid.write('MT {0}\n'.format(MT))
             vectorAlias = xsDat.xs[MT]
@@ -316,15 +316,15 @@ class PDT_XS():
         self.xs = xsDict
 
     def print_stats(self):
-        print 'numGroups numMoments temperature type(MG/MB) type(micro/macro)'
-        print self.G, self.M, self.D, self.T, self.typeStr.lower(), self.microStr.lower().split()[0]
-        print 'MT list'
-        print sorted(self.xs.keys())
+        print('numGroups numMoments temperature type(MG/MB) type(micro/macro)')
+        print(self.G, self.M, self.D, self.T, self.typeStr.lower(), self.microStr.lower().split()[0])
+        print('MT list')
+        print(sorted(self.xs.keys()))
 
 
 #########################################################################################
 def print_PDT_MT_enum():
-    print '''
+    print('''
     These are the MT numbers used in PDT. The rule to move from PDT_MT to (MF,MT) used in ENDF is:
     if PDT_MT < 1000:
         MF = 3
@@ -505,6 +505,6 @@ def print_PDT_MT_enum():
   MT_x_th_beo_coh       , // MT = 2734,  BeO coherent
   MT_x_th_zrhyd_zr_incoh, // MT = 2735,  Zr in ZrH incoherent
   MT_x_th_zrhyd_zr_coh  , // MT = 2736,  Zr in ZrH coherent
-'''
+''')
 
 

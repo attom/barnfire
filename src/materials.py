@@ -34,7 +34,7 @@ def do_all(inputDict):
     #
     util.print_newline(verbosity)
     if verbosity > 1:
-        print 'NB: All dictionaries are printed as sorted(dict.items())'
+        print('NB: All dictionaries are printed as sorted(dict.items())')
     globalTDict, globalBXSDict, globalTXSDict = {}, {}, {}
     globalZASabList, globalZAList, globalZList = glob.get_union_parameters(
         materials, globalTDict, globalBXSDict, globalTXSDict, not(useCommonBXS), verbosity)
@@ -61,7 +61,7 @@ def define_input_parser():
     actionGroup.add_argument('-n', '--njoy', help="Create NJOY input decks. If neither '-n' nor '-b' is specified, do this.", action='store_true')
     actionGroup.add_argument('-b', '--bondarenko', help='Run Bondarenko iteration.', action='store_true')
     # Both options
-    parser.add_argument('-m', '--materialslist', help='List of materials to use (for more advanced options, see materials_materials.py).', nargs='+', default=['hpu'], choices=mat.get_materials_name2function_dict().keys())
+    parser.add_argument('-m', '--materialslist', help='List of materials to use (for more advanced options, see materials_materials.py).', nargs='+', default=['hpu'], choices=list(mat.get_materials_name2function_dict().keys()))
     # NJOY options
     njoyGroup = parser.add_argument_group('NJOY options', 'Options to use with --njoy.')
     njoyGroup.add_argument('-c', '--commonbackgroundxs', help='Do not use common background XS if specified.', action='store_false', default=True)
@@ -101,11 +101,11 @@ def finish_parsing_inputs(inputDict):
         inputDict['njoy'] = True
     inputDict['materialslist'] = set(inputDict['materialslist'])
     if inputDict['energybounds'][1] > 2E7:
-        print 'Current ENDF data does not exist above 20 MeV. Changing energy upperbound to this value.'
+        print('Current ENDF data does not exist above 20 MeV. Changing energy upperbound to this value.')
         inputDict['energybounds'][1] = 2E7
     inputDict['energybounds'][0] = max(0, inputDict['energybounds'][0])
     if inputDict['verbosity'] > 1:
-        print inputDict
+        print(inputDict)
     inputDict['finishedParsing'] = True
 
 if __name__=='__main__':

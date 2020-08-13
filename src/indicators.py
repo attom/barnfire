@@ -252,7 +252,7 @@ def do_all(inputDict):
 
     # For each material, compute total cross sections or infinite-medium fluxes
     if verbosity:
-        print 'Using resolution {0}'.format(pwResFactor)
+        print('Using resolution {0}'.format(pwResFactor))
     if calcFlux:
         # Infinite-medium flux
         energyGrid, fluxMat = compute_infinite_medium_flux(materials, linearTol, maxFluxJump, maxdEJump, eSpacing, WattConstants, useEscapeXS, normalizeSource, temperatureDependence, useLowZScat, noScatOpt, plotOutput, verbosity)
@@ -272,7 +272,7 @@ def do_all(inputDict):
     else:
         groupBdrs = read_group_file(meshPath)
     if verbosity:
-        print 'Using energy mesh {0} with {1} groups'.format(meshPath, len(groupBdrs)-1)
+        print('Using energy mesh {0} with {1} groups'.format(meshPath, len(groupBdrs)-1))
 
     # Save flux/xs on common group boundaries
     if calcFlux:
@@ -318,8 +318,8 @@ def compute_infinite_medium_flux(materials, linearTol, maxFluxJump, maxdEJump, e
         globalZATList = sorted(globalZATList)
         globalZASabTList = sorted(globalZASabTList)
         if verbosity:
-            print 'globalZATList:', globalZATList
-            print 'globalZASabTList:', globalZASabTList
+            print('globalZATList:', globalZATList)
+            print('globalZASabTList:', globalZASabTList)
     else:
         for material in materials:
             material.update_temperature(-1)
@@ -341,7 +341,7 @@ def compute_infinite_medium_flux(materials, linearTol, maxFluxJump, maxdEJump, e
         parser = readgroupr.define_input_parser()
         parseStr = '-i {i} -I {I} -w pen -T {T} -m {m}'.format(i=inDirr, I=filename, T=desiredT, m=mtsStr)
         if verbosity:
-            print 'Looking for ({Z}, {A}, {Sab})... '.format(Z=Z,A=A,Sab=Sab),
+            print('Looking for ({Z}, {A}, {Sab})... '.format(Z=Z,A=A,Sab=Sab), end=' ')
             parseStr += ' -v'
         readerDict = vars(parser.parse_args(parseStr.split()))
         readgroupr.finish_parsing(readerDict)
@@ -353,7 +353,7 @@ def compute_infinite_medium_flux(materials, linearTol, maxFluxJump, maxdEJump, e
         scatXSDict[(Z,A,T)] = xsDict[(3,2)]
 
     # Determine cross sections on union grid
-    unionEnergyGrid = np.unique(np.concatenate(energyGridDict.values()))
+    unionEnergyGrid = np.unique(np.concatenate(list(energyGridDict.values())))
     if plotOutput > 2:
         plot_dE(unionEnergyGrid, 'de_flux_0_union')
 
@@ -382,7 +382,7 @@ def compute_infinite_medium_flux(materials, linearTol, maxFluxJump, maxdEJump, e
     escapeXS = np.zeros(numMaterials)
     if useEscapeXS:
         if verbosity:
-            print 'Using escape cross sections (1/cm):'
+            print('Using escape cross sections (1/cm):')
         for material in materials:
             iMat = materialIndexDict[material.shortName]
             escapeXS[iMat] += material.chordLength
@@ -390,14 +390,14 @@ def compute_infinite_medium_flux(materials, linearTol, maxFluxJump, maxdEJump, e
             #oxygenXS = 3.8883 * material.elemAtomFracDict[8] * material.atomDensity
             #escapeXS[iMat] += oxygenXS
             if verbosity:
-                print material.shortName, escapeXS[iMat]
+                print(material.shortName, escapeXS[iMat])
 
     # Compute Q/Sigma_t
     unionFluxMat = np.zeros((numMaterials, len(unionEnergyGrid)))
     t0 = time.time()
     perform_slowing_down_calc(energyGridDict, scatXSDict, unionFluxMat, materialIndexDict, alphaDict, unionXSMat, unionEnergyGrid, materials, WattConstants, escapeXS, normalizeSource, useLowZScat, noScatOpt, plotOutput)
     if verbosity:
-        print 'Performed slowing-down calculation in {0} sec'.format(time.time() - t0)
+        print('Performed slowing-down calculation in {0} sec'.format(time.time() - t0))
     if plotOutput > 1:
         plot_sigma(materials, materialIndexDict, unionEnergyGrid, unionFluxMat, 'flux_2_after_dE_thick', 'Flux(E)/M(E)')
 
@@ -460,8 +460,8 @@ def compute_total_xs(materials, linearTol, maxXSJump, maxdEJump, temperatureDepe
         globalZATList = sorted(globalZATList)
         globalZASabTList = sorted(globalZASabTList)
         if verbosity:
-            print 'globalZATList:', globalZATList
-            print 'globalZASabTList:', globalZASabTList
+            print('globalZATList:', globalZATList)
+            print('globalZASabTList:', globalZASabTList)
     else:
         for material in materials:
             material.update_temperature(-1)
@@ -482,7 +482,7 @@ def compute_total_xs(materials, linearTol, maxXSJump, maxdEJump, temperatureDepe
         parser = readgroupr.define_input_parser()
         parseStr = '-i {i} -I {I} -w pen -T {T} -m {m}'.format(i=inDirr, I=filename, T=desiredT, m=mtsStr)
         if verbosity:
-            print 'Looking for ({Z}, {A}, {Sab})... '.format(Z=Z,A=A,Sab=Sab),
+            print('Looking for ({Z}, {A}, {Sab})... '.format(Z=Z,A=A,Sab=Sab), end=' ')
             parseStr += ' -v'
         readerDict = vars(parser.parse_args(parseStr.split()))
         readgroupr.finish_parsing(readerDict)
@@ -493,7 +493,7 @@ def compute_total_xs(materials, linearTol, maxXSJump, maxdEJump, temperatureDepe
         totalXSDict[(Z,A,T)] = xsDict[(3,1)]
 
     # Concatenate the individual energy grids into a 1-D, ordered, unionized, numpy array
-    unionEnergyGrid = np.unique(np.concatenate(energyGridDict.values()))
+    unionEnergyGrid = np.unique(np.concatenate(list(energyGridDict.values())))
 
     # Compute the macroscopic XS on the union grid by linear interpolation of microscopic XS
     materialIndexDict = {}
@@ -816,7 +816,7 @@ def thin_grid(xj, yij, linearTol, verbosity=False):
     '''
 
     if verbosity > 1:
-        print 'Thinning with tolerance {0}'.format(linearTol)
+        print('Thinning with tolerance {0}'.format(linearTol))
     numDim = len(yij)
     numPoints = len(xj)
     originalNumPoints = numPoints
@@ -848,11 +848,11 @@ def thin_grid(xj, yij, linearTol, verbosity=False):
         xj = xj[toKeep]
         yij = yij[:, toKeep]
         if verbosity > 1:
-            print 'Removing {0} of {1} points in iteration {2}'.format(
-                numToRemove, numPoints+numToRemove, iteration)
+            print('Removing {0} of {1} points in iteration {2}'.format(
+                numToRemove, numPoints+numToRemove, iteration))
     if verbosity:
-        print 'Reduced grid from {0} to {1} points in {2} iterations'.format(
-            originalNumPoints, numPoints, iteration)
+        print('Reduced grid from {0} to {1} points in {2} iterations'.format(
+            originalNumPoints, numPoints, iteration))
     return xj, yij
 
 def compute_thinning_error(xOriginal, yOriginal, xThinned, yThinned, verbosity=False):
@@ -873,7 +873,7 @@ def compute_thinning_error(xOriginal, yOriginal, xThinned, yThinned, verbosity=F
         yErr = np.maximum(yErr, np.abs((yOriginal[iDim,:] - yNewInterp) / yOriginal[iDim,:]))
     maxErr = max(yErr)
     if verbosity:
-        print 'Maximum fractional error from thinning was {0}'.format(maxErr)
+        print('Maximum fractional error from thinning was {0}'.format(maxErr))
     return maxErr
 
 def thicken_grid(xj, yij, maxRelJump, opt='x', verbosity=False):
@@ -894,7 +894,7 @@ def thicken_grid(xj, yij, maxRelJump, opt='x', verbosity=False):
     '''
 
     if verbosity > 1:
-        print 'Thickening with jump tolerance {0} on {1}'.format(maxRelJump, opt)
+        print('Thickening with jump tolerance {0} on {1}'.format(maxRelJump, opt))
     numDim = len(yij)
     numPoints = len(xj)
     originalNumPoints = numPoints
@@ -924,11 +924,11 @@ def thicken_grid(xj, yij, maxRelJump, opt='x', verbosity=False):
         for iDim in range(numDim):
             yij[iDim,:] = np.interp(xj, xjOld, yijOld[iDim, :])
         if verbosity > 1:
-            print 'Adding {0} points to existing {1} points in iteration {2}'.format(
-                numToAdd, numPoints-numToAdd, iteration)
+            print('Adding {0} points to existing {1} points in iteration {2}'.format(
+                numToAdd, numPoints-numToAdd, iteration))
     if verbosity:
-        print 'Enlarged grid from {0} to {1} points in {2} iterations'.format(
-            originalNumPoints, numPoints, iteration)
+        print('Enlarged grid from {0} to {1} points in {2} iterations'.format(
+            originalNumPoints, numPoints, iteration))
     xj[0] = initialX
     return xj, yij
 
@@ -936,14 +936,14 @@ def compute_x_jump(xj, verbosity=False):
     '''Compute the maximum relative change in the ascending grid'''
     jump = np.max(np.diff(xj) / xj[:-1])
     if verbosity:
-        print 'Maximum jump in the grid is {0}'.format(jump)
+        print('Maximum jump in the grid is {0}'.format(jump))
     return jump
 
 def compute_y_jump(yij, verbosity=False):
     '''Compute the maximum relative change in the data points'''
     jump = np.max(np.abs(np.diff(yij)) / np.minimum(yij[:, 1:], yij[:, :-1]))
     if verbosity:
-        print 'Maximum jump in the data points is {0}'.format(jump)
+        print('Maximum jump in the data points is {0}'.format(jump))
     return jump
 
 
@@ -1015,7 +1015,7 @@ def calc_avg_from_pw(pwGrid, pwMat, avgGrid, doIntegral=True):
         # See find_range for details on how boundaries are handled
         gPWStart, gPWEnd = find_range(pwGrid, avgGrid[g], avgGrid[g+1])
         if avgGrid[g+1] < pwGrid[0] or avgGrid[g] > pwGrid[-1]:
-            print 'Error: Do not use for extrapolation.'
+            print('Error: Do not use for extrapolation.')
             exit(1)
         if gPWStart < gPWEnd:
             # Do a multi-point trapezoid rule to determine the integral inside avg cell g.
@@ -1301,10 +1301,10 @@ def define_input_parser():
     parser.add_argument('-w', '--workopt', help='What to do. flux means calculate infinite-medium flux. fluxe means calculate infinite-medium flux with escape cross section. sigt means calculate total macroscopic cross section. flux and fluxe store psi*dE/M(E), where M(E)=1/E in the RRR. wgt means do fluxe but store the MG flux (psi*dE).', choices=['flux', 'fluxe', 'sigt', 'wgt'], default=defaults['workopt'])
     parser.add_argument('-R', '--resolvedresrange', dest='rrr', help='Energy range of resolved resonance region.', type=float, nargs=2, default=defaults['rrr'])
     parser.add_argument('-G', '--groupopt', help="Base coarse group structure file head. If the flux work option is used, the output group structure is the base coarse group structure with the RRR overwritten by the hyperfine group structure. Some examples include 'c5g7', 'scale-44', and 'res-N' where N=1,..9. Always looks in default directory of makegroups.", default=defaults['groupopt'])
-    parser.add_argument('-r', '--resolution', help='Resolution to use for the pointwise flux calculations', type=int, choices=range(11), default=defaults['resolution'])
+    parser.add_argument('-r', '--resolution', help='Resolution to use for the pointwise flux calculations', type=int, choices=list(range(11)), default=defaults['resolution'])
     parser.add_argument('-E', '--energyspacing', help='The maximum energy jump in the final grid is equal to this factor multiplied by a jump normalization based on downscattering distance off a heavy nucleus.', type=float, default=defaults['energyspacing'])
     parser.add_argument('-m', '--materialopt', help=" Unless 'manual' is used, specifies a set of materials to use. If 'manual' is used, give a space-separated list of material names in 'listmaterials'.", choices=['3','4','5','c5g7', 'graphite', 'iron', 'kpin', 'kenrichedpin', 'kcladpin', 'kpin2d', 'kenrichedpin2d', 'kmoxpin2d', 'kmoxenrichedpin2d', 'trigafuel', 'ctrigafuel', 'ctrigafuel_0', 'trigamore', 'deb', 'manual'], default=defaults['materialopt'])
-    parser.add_argument('-i', '--indicatormaterials', dest='listmaterials', help="When manual 'materialopt' is used, specify the materials to use.", nargs='+', default=defaults['listmaterials'], choices=mat.get_materials_name2function_dict().keys())
+    parser.add_argument('-i', '--indicatormaterials', dest='listmaterials', help="When manual 'materialopt' is used, specify the materials to use.", nargs='+', default=defaults['listmaterials'], choices=list(mat.get_materials_name2function_dict().keys()))
     parser.add_argument('-t', '--temperaturedependence', help="If specified, use the temperature in the PENDF file that corresponds to the temperature of the material (as specified in 'materials_materials.py'). If this temperature does not exist, an error is thrown. If not specified, the first temperature in the PENDF file is used. This flag is added for 'materialopt' of '3'.", action='store_true', default=False)
     parser.add_argument('-M', '--meshname', help="The energy mesh on which the output fluxes are constructed. {r} is replaced by the resolution. If the 'flux' workopt is used, the mesh file is written to. Else, is it read from. If no file type is specified, '.txt' is used. If no directory is specified, the 'energyDat' directory from directories is used.", default=defaults['meshname'])
     return parser
@@ -1314,8 +1314,8 @@ if __name__ == '__main__':
     parser = define_input_parser()
     inputDict = vars(parser.parse_args())
     if inputDict['verbosity'] > 1:
-        print 'Summary of inputs:'
-        print inputDict
+        print('Summary of inputs:')
+        print(inputDict)
     #test_grid_thinning_and_thickening()
     do_all(inputDict)
 

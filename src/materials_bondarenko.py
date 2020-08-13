@@ -40,7 +40,7 @@ def perform_bondarenko_iterations(inputDict, materials, verbosity):
         shutil.copy2(energyMeshPath, energyMeshPathOut)
     #
     if verbosity:
-        print '------- Bondarenko -------'
+        print('------- Bondarenko -------')
     fluxDict = read_fluxes(fluxBasePath, materials)
     for material in materials:
         backgroundXSDict = iterate_one_material(rootDirr, material, maxError, maxIterations, energyMesh, fluxDict, verbosity)
@@ -48,9 +48,9 @@ def perform_bondarenko_iterations(inputDict, materials, verbosity):
             unset_background_xs_dict(material, backgroundXSDict, verbosity)
         print_one_material(rootDirr, outDirr, material, backgroundXSDict, scatMatrixFormat, useSimpleRxn, rxnsToPrint, energyMesh, fluxDict, verbosity)
     if verbosity:
-        key = backgroundXSDict.keys()[0]
+        key = list(backgroundXSDict.keys())[0]
         numGroups = len(backgroundXSDict[key])
-        print 'Number of groups is', numGroups
+        print('Number of groups is', numGroups)
 
 def read_fluxes(fluxBasePath, materials):
     '''Read in flux files'''
@@ -92,9 +92,9 @@ def print_one_material(rootDirr, outDirr, material, backgroundXSDict, scatMatrix
         if useSimpleRxn:
             parseStr += ' -m 1 2 18 102 221 452 -M 2 18 221 -t 221'
         if verbosity > 2:
-            print 'Calling ./Readgroupr', parseStr
+            print('Calling ./Readgroupr', parseStr)
         if verbosity:
-            print 'Printing XS to {0}'.format(os.path.join(outDirr, outName))
+            print('Printing XS to {0}'.format(os.path.join(outDirr, outName)))
         readerDict = vars(parser.parse_args(parseStr.split()))
         if fluxDict is not None:
             readerDict['flux'] = fluxDict[material.shortName]
@@ -149,7 +149,7 @@ def form_and_print_macroscopic_xs(dirr, ZAList, material, numGroups, verbosity=F
     # Keep a reaction if it appears in at least one component
     MTs = set()
     for (Z,A) in xsDictIn:
-        MTs.update(xsDictIn[(Z,A)].xs.keys())
+        MTs.update(list(xsDictIn[(Z,A)].xs.keys()))
     # A material-average decay rate does not make sense, so do not compute one
     if MTdecay in MTs:
         MTs.remove(MTdecay)
@@ -282,7 +282,7 @@ def form_and_print_macroscopic_xs(dirr, ZAList, material, numGroups, verbosity=F
     outName = 'xs_{0}_{1}.data'.format(shortName, numGroups)
     outPath = os.path.join(dirr, outName)
     if verbosity:
-        print 'Printing combined XS to {0}'.format(outPath)
+        print('Printing combined XS to {0}'.format(outPath))
     pdtxs.write_PDT_xs_generally(outPath, xsDict)
 
 
@@ -290,7 +290,7 @@ def iterate_one_material(rootDirr, material, maxError, maxIterations, energyMesh
     '''Perform Bondarenko iteration on one material. Fine groups within an energy element share the same background cross section.'''
     sig0Vec = None
     if verbosity:
-        print 'Performing Bondarenko iteration for material {0}'.format(material.longName)
+        print('Performing Bondarenko iteration for material {0}'.format(material.longName))
     ZAList = sorted(material.ZAList)
     readerOpt = 'gendf'
     totalXSDict = {}
@@ -341,7 +341,7 @@ def read_one_total_xs(rootDirr, Z, A, material, totalXSDict, readerOpt='gendf', 
     parseStr = '-i {i} -o {o} -w {w} -p none -m 1 -M -t -T {T} -Z {Z}'.format(
         i=fullDirr, o=fullDirr, w=readerOpt, T=T, Z=sig0)
     if verbosity > 2:
-        print 'Calling ./Readgroupr', parseStr
+        print('Calling ./Readgroupr', parseStr)
     readerDict = vars(parser.parse_args(parseStr.split()))
     if fluxDict is not None:
         readerDict['flux'] = fluxDict[material.shortName]
@@ -354,9 +354,9 @@ def read_one_total_xs(rootDirr, Z, A, material, totalXSDict, readerOpt='gendf', 
     if (Z,A) in totalXSDict:
         err = np.linalg.norm((totalXSDict[(Z,A)] - totalXS) / (totalXS + epsilon), np.inf) / np.sqrt(len(totalXS))
         if verbosity > 1:
-            print '>>> Error for ({0}, {1}) is {2}'.format(Z, A, err)
+            print('>>> Error for ({0}, {1}) is {2}'.format(Z, A, err))
         if verbosity > 3:
-            print (totalXSDict[(Z,A)] - totalXS) / (totalXS + epsilon)
+            print((totalXSDict[(Z,A)] - totalXS) / (totalXS + epsilon))
     else:
         err = 1.0
     totalXSDict[(Z,A)] = totalXS
@@ -384,11 +384,11 @@ def build_all_background_xs(material, totalXSDict, backgroundXSDict, verbosity=F
 
 def print_bondarenko(iterationCount, maxIterations, error, maxError, verbosity):
     if verbosity:
-        print 'Iteration {0:2g} (max {1})'.format(iterationCount, maxIterations),
-        print 'Error {0:.2e} (max {1})'.format(error, maxError)
+        print('Iteration {0:2g} (max {1})'.format(iterationCount, maxIterations), end=' ')
+        print('Error {0:.2e} (max {1})'.format(error, maxError))
 
 def plot_bondarenko(rootDirr, backgroundXSDict):
-    for (Z,A) in backgroundXSDict.keys():
+    for (Z,A) in list(backgroundXSDict.keys()):
         from matplotlib import pyplot as plt
         plt.clf()
         y = backgroundXSDict[(Z,A)]

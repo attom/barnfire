@@ -17,7 +17,7 @@ TODO: Renormalize MT 2 with the thermal cross section
 #STDLIB
 import os
 import sys
-import cPickle as pickle
+import pickle as pickle
 #import cProfile as profile
 from datetime import datetime
 #TPL
@@ -420,7 +420,7 @@ def read_xs_vector_body(fid, xsDict, verbosity=0):
     mt = xsDict['mt']
     pdtMT = get_pdt_mt(mf, mt)
     if verbosity > 1:
-        print 'Reading  MF {0}, MT {1:3g} and storing in PDT-MT {2:4g}'.format(mf, mt, pdtMT)
+        print('Reading  MF {0}, MT {1:3g} and storing in PDT-MT {2:4g}'.format(mf, mt, pdtMT))
     line = get_next_line(fid)
     temperature = get_float(line, 1)
     groupIndex = 0
@@ -452,7 +452,7 @@ def read_xs_matrix_body(fid, xsDict, verbosity=0):
     mt = xsDict['mt']
     pdtMT = get_pdt_mt(mf, mt)
     if verbosity > 1:
-        print 'Reading  MF {0}, MT {1:3g} and storing in PDT-MT {2:4g}'.format(mf, mt, pdtMT)
+        print('Reading  MF {0}, MT {1:3g} and storing in PDT-MT {2:4g}'.format(mf, mt, pdtMT))
     line = get_next_line(fid)
     temperature = get_float(line, 1)
     groupIndex = 0
@@ -499,7 +499,7 @@ def read_prompt_fission_matrix_body(fid, xsDict, verbosity=0):
     mt = xsDict['mt']
     pdtMT = 1018
     if verbosity > 1:
-        print 'Reading  MF {0}, MT {1:3g} and storing in PDT-MT {2:4g}'.format(mf, mt, pdtMT)
+        print('Reading  MF {0}, MT {1:3g} and storing in PDT-MT {2:4g}'.format(mf, mt, pdtMT))
     flux = np.zeros(numGroups)
     lowEnergySpectrum = np.zeros(numGroups)
     line = get_next_line(fid)
@@ -596,7 +596,7 @@ def read_delayed_fission_spectrum(fid, xsDict, verbosity=0):
     mt = xsDict['mt']
     pdtMT = 2055
     if verbosity > 1:
-        print 'Reading  MF {0}, MT {1:3g} and storing in PDT-MT {2:4g}'.format(mf, mt, pdtMT)
+        print('Reading  MF {0}, MT {1:3g} and storing in PDT-MT {2:4g}'.format(mf, mt, pdtMT))
     nu = np.zeros(numGroups)
     line = get_next_line(fid)
     temperature = get_float(line, 1)
@@ -662,12 +662,12 @@ def get_pointwise_xs(filePathIn, mtsForMF3, desiredT, outputDict, verbosity):
                 outputDict['energy'][:] = data[strt:end:2]
                 strt, end = 1, numEntries
                 outputDict[(mf,mt)][:] = data[strt:end:2]
-            if np.all(foundMFMTDict.values()):
+            if np.all(list(foundMFMTDict.values())):
                 break
     if not foundT:
-        print 'Did not find a temperature at {0} K.'.format(desiredT)
+        print('Did not find a temperature at {0} K.'.format(desiredT))
     elif verbosity:
-        print 'Found a temperature at {0} K with {1} points.'.format(temperature, numPoints)
+        print('Found a temperature at {0} K with {1} points.'.format(temperature, numPoints))
 
 ####################################################################################
 def get_pot_scat_xs(filePath, outputDict, verbosity=False):
@@ -694,7 +694,7 @@ def get_pot_scat_xs(filePath, outputDict, verbosity=False):
                 potXS = 4 * np.pi * scatLength * scatLength
                 outputDict['pot'] = potXS
                 if verbosity:
-                    print os.path.split(filePath)[-1], potXS
+                    print(os.path.split(filePath)[-1], potXS)
                 return
 
 
@@ -853,7 +853,7 @@ def get_fission_product_yields(filePath, outputDict, verbosity=0):
                 # Create yield matrix (energy,nuclide). Different energies may have different fp.
                 ZAMSet = set()
                 for ZAMDict in fpDicts:
-                    ZAMSet.update(ZAMDict.keys())
+                    ZAMSet.update(list(ZAMDict.keys()))
                 numNuclides = len(ZAMSet)
                 indexToZAMList = []
                 ZAMtoIndexDict = {}
@@ -891,7 +891,7 @@ def get_reaction_Q_values(filePathIn, mtsForMF3, outputDict, verbosity=0):
                 line = get_next_line(fid)
                 # The Q-value, in eV
                 outputDict[(mf,mt)] = get_float(line, 2)
-            if np.all(foundMFMTDict.values()):
+            if np.all(list(foundMFMTDict.values())):
                 break
 
 ####################################################################################
@@ -943,21 +943,21 @@ def get_scattering_sizes(filePath, verbosity=False):
                 xs, pos, line = get_float_list(pos, line, fid, numEntries)
                 secondarySize += numSecondaryPos - 1
                 if verbosity > 2:
-                    print '{0} {1:3g} {2:5.1f} {3:3g} {4:3g}'.format(mf, mt, temperature, groupIndex, numSecondaryPos - 1)
+                    print('{0} {1:3g} {2:5.1f} {3:3g} {4:3g}'.format(mf, mt, temperature, groupIndex, numSecondaryPos - 1))
             if verbosity > 1:
-                print 'total: {0}, {1:3g}, {2:5.1f}, {3:3g}'.format(mf, mt, temperature, secondarySize)
+                print('total: {0}, {1:3g}, {2:5.1f}, {3:3g}'.format(mf, mt, temperature, secondarySize))
             secondarySizeDict[(mf,mt)] = max(secondarySizeDict[(mf,mt)], secondarySize)
         if verbosity:
-            print 'secondarySizeDict (max over temperatures)'
-            print secondarySizeDict
+            print('secondarySizeDict (max over temperatures)')
+            print(secondarySizeDict)
         return secondarySizeDict
 
 def get_reaction_list(filePath, verbosity):
     '''Get all the reactions in the file.'''
-    print filePath
+    print(filePath)
     with open(filePath, 'r') as fid:
         line = get_next_line(fid)
-        print line
+        print(line)
         mf, mt, lineNum = get_mf_mt_lineNum(line)
         startList = []
         mfList = []
@@ -989,8 +989,8 @@ def get_reaction_list(filePath, verbosity):
             line = get_next_line(fid)
             thermList.append(get_float(line, 1))
         if verbosity:
-            print 'File contains the following reactions'
-            print '{0:4s} {1:2s} {2:26s} {3} {4} {5}'.format('MF', 'MT', 'Name', 'numLeg', 'numSig0', 'T(K)')
+            print('File contains the following reactions')
+            print('{0:4s} {1:2s} {2:26s} {3} {4} {5}'.format('MF', 'MT', 'Name', 'numLeg', 'numSig0', 'T(K)'))
         pdtMTList, combineTransferList, validMTsForMF3, validMTsForMF5, validMTsForMF6 = get_mt_lists()
         mt2long = get_mt2long_dict(pdtMTList)
         for mf, mt, numLeg, numSig0, T in zip(mfList, mtList, numLegList, numSig0List, thermList):
@@ -1010,7 +1010,7 @@ def get_reaction_list(filePath, verbosity):
             else:
                 name = ''
             if verbosity:
-                print '{0:2g} {1:4g} {2:30s} {3:2g} {4:2g} {5:8.1f}'.format(mf, mt, name, numLeg, numSig0, T)
+                print('{0:2g} {1:4g} {2:30s} {3:2g} {4:2g} {5:8.1f}'.format(mf, mt, name, numLeg, numSig0, T))
         uniqueMFMTs = set([ (mf, mt) for mf,mt in zip(mfList, mtList) if mf in (3,5,6) ])
         uniqueTemperatures = sorted(set(thermList))
         numLegMoments = 1
@@ -1039,7 +1039,7 @@ def get_float_list(pos, line, fid, listLength):
     numbersPerLine = 6
     stride = 11
     sz = 0
-    numLines = listLength / numbersPerLine
+    numLines = listLength // numbersPerLine
     strrs = []
     # Read full lines
     for i in range(numLines):
@@ -1052,7 +1052,7 @@ def get_float_list(pos, line, fid, listLength):
         for j in range(listLength % numbersPerLine):
             strrs.append(line[stride*j:stride*(j+1)])
     endPos = ((listLength - 1) % numbersPerLine) + 1
-    newList = map(njoy_to_float, strrs)
+    newList = list(map(njoy_to_float, strrs))
     return newList, endPos, line
 
 def njoy_to_float(strr):
@@ -1141,7 +1141,7 @@ def is_section_end(mf, mt, lineNum):
 def seek_to_next_useful_entry(fid, mf, mt, verbosity=0):
     '''Skip this (MF,MT) pair and advance fid until the next non-trivial one is found'''
     if verbosity > 1:
-        print 'Skipping MF {0}, MT {1:3g}'.format(mf, mt)
+        print('Skipping MF {0}, MT {1:3g}'.format(mf, mt))
     line, pos = seek_to_next_entry(fid, mf, mt)
     if line == '':
         return line
@@ -1364,7 +1364,7 @@ def lookup_num_sig0(maxNumSig0, mf, mt):
 
 def lookup_num_therm(maxNumTherm, mf, mt):
     '''Look up the number of temperatures the reaction contains (either maxNumTherm or 1).'''
-    thermalMTs = range(221, 246+1)
+    thermalMTs = list(range(221, 246+1))
     if mf == 3:
         mtsDependOnT = [1, 2, 18, 102]
         if (mt in mtsDependOnT) or (mt in thermalMTs):
@@ -1457,23 +1457,23 @@ def get_pdt_mt(mf, mt):
 
 ####################################################################################
 def print_mts(pdtMTList, combineTransferList, validMTsForMF3, validMTsForMF5, validMTsForMF6):
-    print 'PDT rxns'
+    print('PDT rxns')
     for pdtMT in sorted(pdtMTList):
-        print pdtMT
-    print 'Combine these rxns into 2501'
-    print combineTransferList
-    print 'Valid ENDF MT numbers for MF 3'
-    print validMTsForMF3
-    print 'Valid ENDF MT numbers for MF 5'
-    print validMTsForMF5
-    print 'Valid ENDF MT numbers for MF 6'
-    print validMTsForMF6
+        print(pdtMT)
+    print('Combine these rxns into 2501')
+    print(combineTransferList)
+    print('Valid ENDF MT numbers for MF 3')
+    print(validMTsForMF3)
+    print('Valid ENDF MT numbers for MF 5')
+    print(validMTsForMF5)
+    print('Valid ENDF MT numbers for MF 6')
+    print(validMTsForMF6)
 
 def print_kept_mts(mfmts, names):
     for mf2print in [3,6]:
-        print 'Keeping these ENDF MT numbers for MF {0}'.format(mf2print)
-        for (mf,mt), name in filter(lambda ((mf,mt), name): mf==mf2print, zip(mfmts, names)):
-            print '{0:3g} ({1})'.format(mt, name)
+        print('Keeping these ENDF MT numbers for MF {0}'.format(mf2print))
+        for (mf,mt), name in [mf_mt_name for mf_mt_name in zip(mfmts, names) if mf_mt_name[0][0]==mf2print]:
+            print('{0:3g} ({1})'.format(mt, name))
 
 def print_xs_summary(filePathIn, data, verbosity):
     filenameOut = '{0:02g}-{1:03g}.data'.format(data['Z'], data['A'])
@@ -1481,14 +1481,14 @@ def print_xs_summary(filePathIn, data, verbosity):
     mfmtsSet = data['mfmts']
     mfmtsSorted = sorted(mfmtsSet)
     if verbosity > 1:
-        print 'Summary of XS...'
-        print 'MF MT numLeg numSig0 numTherm'
+        print('Summary of XS...')
+        print('MF MT numLeg numSig0 numTherm')
         for (mf, mt) in mfmtsSorted:
-            print '{0} {1:3g} {2:2g} {3:2g} {4:2g}'.format(
+            print('{0} {1:3g} {2:2g} {3:2g} {4:2g}'.format(
                 mf, mt,
                 data['rxn'][(mf,mt)]['numLegMoments'],
                 data['rxn'][(mf,mt)]['numSig0'],
-                data['rxn'][(mf,mt)]['numTherm'])
+                data['rxn'][(mf,mt)]['numTherm']))
 
 ####################################################################################
 def find_interpolation_indices_fractions(value, sortedArray, monotonicFunction=(lambda x: x)):
@@ -1570,7 +1570,7 @@ def condense_xs(xsDataIn, energyMesh, flux, verbosity):
     # >>> Determine energy mesh properties <<<
     numGroups = len(energyMesh)
     if numGroups != xsDataIn['numGroups']:
-        print 'Error. Input energyMesh should contain the same number of groups as the GENDF file.'
+        print('Error. Input energyMesh should contain the same number of groups as the GENDF file.')
         exit(1)
     energyMesh -= np.min(energyMesh)
     meshElements = np.unique(energyMesh)
@@ -1610,19 +1610,19 @@ def condense_xs(xsDataIn, energyMesh, flux, verbosity):
     if flux is None:
         flux = xsDataIn['flux']
     if flux.shape[-1] != numGroupFlux:
-        print flux.shape[-1]
-        print numGroupFlux
-        print 'Error. Input flux should contain the same number of groups as the GENDF file.'
+        print(flux.shape[-1])
+        print(numGroupFlux)
+        print('Error. Input flux should contain the same number of groups as the GENDF file.')
         exit(1)
     if len(flux.shape) == 1:
         fluxSmall = flux
         flux = np.zeros((numThermFlux, numSig0Flux, numGroupFlux))
         flux[:,:,:] = fluxSmall[np.newaxis, np.newaxis, :]
     elif flux.shape != xsDataIn['flux'].shape:
-        print 'Error. If input flux is an ndarray of dimension 3, it must contain the same number of sigma0 and T values as the GENDF file.'
+        print('Error. If input flux is an ndarray of dimension 3, it must contain the same number of sigma0 and T values as the GENDF file.')
         exit(1)
     else:
-        print 'Error. Input flux must either be an ndarray of dimension 1 or 3.'
+        print('Error. Input flux must either be an ndarray of dimension 1 or 3.')
         exit(1)
     #
     # Define the elementwise or "coarse-group" sig0- and T-dependent flux
@@ -1991,15 +1991,15 @@ def interpolate_T_sig0_xs(data, desiredT, desiredSig0Vec, outputDict, verbosity=
     sig0List = np.array(sorted(data['sig0List']))
     sig0FractionMat = find_interpolation_indices_fractions_array(desiredSig0Vec, sig0List, sqrtLambda, True)
     if verbosity:
-        print 'Temperature interpolation:', desiredT, thermList[thermIndices], thermFractions
-        print 'Sigma0 interpolation:'
-        print sorted(sig0List, reverse=True)
-        print desiredSig0Vec
+        print('Temperature interpolation:', desiredT, thermList[thermIndices], thermFractions)
+        print('Sigma0 interpolation:')
+        print(sorted(sig0List, reverse=True))
+        print(desiredSig0Vec)
     if verbosity > 3:
         for i in range(sig0FractionMat.shape[0]):
             for j in range(sig0FractionMat.shape[1]):
-                print '{0:.3f}'.format(sig0FractionMat[i,j]),
-            print ''
+                print('{0:.3f}'.format(sig0FractionMat[i,j]), end=' ')
+            print('')
     # Bound group boundaries
     data['groupBdrs'][-1] = 0.0
     # Use one avg sig0 for all energies to avoid different normalizations at different sig0.
@@ -2221,7 +2221,7 @@ def write_pdt_xs(filePath, data, temperature, format='csr', whichXS='usual', fro
         if (6,18) in mfmts and (5,455) in mfmts:
             # If has both prompt and delayed neutron information, compute and add steady-state nu and chi
             numXS += 2
-            numXfer += 1 # Fission matrix (ATT: already included?)
+            #numXfer += 1 # Fission matrix (ATT: already included?)
         if (3,259) in mfmts:
             # Include the inverse velocity XS, if available
             numXS += 1
@@ -2477,6 +2477,6 @@ if __name__=='__main__':
     inputDict = vars(parser.parse_args())
     finish_parsing(inputDict)
     if inputDict['verbosity'] > 1:
-        print 'Summary of inputs:'
-        print inputDict
+        print('Summary of inputs:')
+        print(inputDict)
     execute_reader(inputDict)

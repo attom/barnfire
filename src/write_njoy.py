@@ -8,10 +8,19 @@ Write NJOY script
 #STDLIB
 import os
 from datetime import datetime
+from functools import cmp_to_key
 #TPL
 #import numpy as np
 #MINE
 from directories import try_mkdir, try_make_exe, get_common_directories
+
+# Define sorting function to emulate python2-like behavior
+def cmpfunc(a,b):
+    try:
+        return (a > b) - (a < b)
+    except TypeError:
+        s1, s2 = type(a).__name__, type(b).__name__
+        return (s1 > s2) - (s1 < s2)
 
 def create_thermal_ace_njoy_script(dat, tapes):
     '''Create NJOY file to generate a thermal ACE output. These are done for each thermal treatment and each temperature.'''
@@ -43,7 +52,7 @@ def create_thermal_ace_njoy_script(dat, tapes):
         thermalFile in dat.endfThermalFileList if thermalFile]
     relPathThermalAceList = [os.path.relpath(thermalPath, aceDirr) for
         thermalPath in endfThermalPathList]
-    endfThermalTapeList = map(lambda x: x + tapes.endfThermalStart, range(numThermals))
+    endfThermalTapeList = [x + tapes.endfThermalStart for x in range(numThermals)]
     endfNonFreeThermalTapeList = [tape for (mt,tape) in
         zip(dat.inelasticMTList, endfThermalTapeList) if mt != 221]
     #
@@ -128,7 +137,7 @@ def create_njoy_script(dat, tapes):
         thermalFile in dat.endfThermalFileList if thermalFile]
     relPathThermalPendfList = [os.path.relpath(thermalPath, pendfDirr) for
         thermalPath in endfThermalPathList]
-    endfThermalTapeList = map(lambda x: x + tapes.endfThermalStart, range(numThermals))
+    endfThermalTapeList = [x + tapes.endfThermalStart for x in range(numThermals)]
     endfNonFreeThermalTapeList = [tape for (mt,tape) in
         zip(dat.inelasticMTList, endfThermalTapeList) if mt != 221]
     #
@@ -565,7 +574,8 @@ def create_groupr_input(deck, dat, tapeENDFIn, tapePENDFIn, tapeGroupsIn, tapeGE
         # To get chi, currently need (6,18), so use this even if not including other MF6
         namedRxts.append((6, 18,"'fission'",'/'))
 
-    namedRxts = sorted(namedRxts)
+    # (compares mixed types)
+    namedRxts = sorted(namedRxts, key=cmp_to_key(cmpfunc))
     # repeat total, elastic, fission, capture, thermal for each temperature
     toRepeat = [(3,1,"'total'",'/'), (3,2,"'elastic scat'",'/'), (3,102,"'rad capture'",'/')]
     if dat.isFissionable:
@@ -655,8 +665,10 @@ def write_job_driver(driverPath, jobFile):
     with open(driverPath, 'w') as fid:
         fid.write('#! /usr/bin/env bash\n')
         fid.write('\n')
-        fid.write('# Run all of {0} in parallel, using a blank line as a delimiter\n'.format(jobFile))
-        fid.write("cat {0} | parallel -d '\\n\\n' --eta -j-1\n".format(jobFile))
+        #fid.write('# Run all of {0} in parallel, using a blank line as a delimiter\n'.format(jobFile))
+        #fid.write("cat {0} | parallel -d '\\n\\n' --eta -j-1\n".format(jobFile))
+        fid.write('# Run all of {0}, using a blank line as a delimiter\n'.format(jobFile))
+        fid.write("cat {0} |  bash\n".format(jobFile))
     try_make_exe(driverPath)
 
 def write_driver_driver(driverDriverPath, driversToDrive, description='Run drivers'):

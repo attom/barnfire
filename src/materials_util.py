@@ -70,7 +70,8 @@ def has_bondarenko_iteration(Z):
     else:
         return True
 
-def is_fissionable((Z,A)):
+def is_fissionable(xxx_todo_changeme):
+    (Z,A) = xxx_todo_changeme
     if Z >= 89:
         return True
     elif (Z,A) in [(88, 223), (88, 226)]:
@@ -154,7 +155,7 @@ def get_element_thermal_name_to_thermal_name_dict():
     '''Returns a dict that maps element thermal name (e.g., hh2o) to thermal name (h2o).
     Free thermal treatment is not in dict.'''
     # Derive this dictionary from previous information
-    return {et: t for (Z,t), et in get_thermal_name_to_element_thermal_name_dict().items()}
+    return {et: t for (Z,t), et in list(get_thermal_name_to_element_thermal_name_dict().items())}
 
 ###############################################################################
 def get_non_bound_names():
@@ -222,4 +223,4 @@ def get_mcnp_thermal_name_to_zaid_list_dict():
 ###############################################################################
 def print_newline(verbosity=False):
     if verbosity:
-        print ''
+        print('')

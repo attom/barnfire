@@ -63,9 +63,9 @@ def resolve_group_structure(inputDat, inputGrid=None):
         eGrid = overwrite_group_boundaries(startE, stopE, desiredGroups, eGrid, verbosity)
     elif desiredGroups == 0:
         if verbosity:
-            print 'Not inserting resonance groups.'
+            print('Not inserting resonance groups.')
     else:
-        print 'Warning! Number of desired groups is too small compared to the existing group structure.'
+        print('Warning! Number of desired groups is too small compared to the existing group structure.')
     # Save new energy grid
     if outName is not None:
         filename = 'energy_out_{0}.txt'.format(outName)
@@ -108,22 +108,22 @@ def overwrite_group_boundaries(lowE, highE, desiredGroups, eGrid, verbosity):
     eInsert[-1] = lowE
     if verbosity > 2:
         i = 0
-        print 'Unrefined energy grid (high-energy portion)'
+        print('Unrefined energy grid (high-energy portion)')
         for e in sorted(set(eGrid[0:gStart+1]), reverse=True):
-            print '{0:.4e},'.format(e),
+            print('{0:.4e},'.format(e), end=' ')
             i += 1
-        print ''
+        print('')
         j = 0
-        print 'Unrefined energy grid (low-energy portion)'
+        print('Unrefined energy grid (low-energy portion)')
         for e in sorted(set(eGrid[gStop:]), reverse=True):
-            print '{0:.4e},'.format(e),
+            print('{0:.4e},'.format(e), end=' ')
             j += 1
-        print ''
-        print 'Number of high-energy groups', i
-        print 'Number of low-energy groups', j
+        print('')
+        print('Number of high-energy groups', i)
+        print('Number of low-energy groups', j)
     if verbosity > 3:
-        print 'Added energy grid (resonance region)'
-        print eInsert[1:-1]
+        print('Added energy grid (resonance region)')
+        print(eInsert[1:-1])
     eGrid = np.concatenate([eGrid[0:gStart], eInsert, eGrid[gStop+1:]])
     return eGrid
 
@@ -192,9 +192,9 @@ def finish_parsing_inputs(inputDat):
         set_input_dat_high(inputDat)
     if inputDat.verbosity > 2:
         for key in sorted(inputDat.__dict__):
-            print key, getattr(inputDat, key)
+            print(key, getattr(inputDat, key))
     elif inputDat.verbosity > 1:
-        print inputDat
+        print(inputDat)
     inputDat.finishedParsing = True
 
 if __name__ == '__main__':
